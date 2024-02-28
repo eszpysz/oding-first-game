@@ -10,6 +10,8 @@ function getComputerChoice() {
     }
 }
 
+// test
+
 function playRound(playerSelection = '', computerSelection = '') {
     const computerChoice = getComputerChoice().toLowerCase();
     const playerChoice = playerSelection.toLowerCase();
