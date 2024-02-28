@@ -10,94 +10,110 @@ function getComputerChoice() {
     }
 }
 
-// test
-
-function playRound(playerSelection = '', computerSelection = '') {
+function playRound(playerSelection = '') {
     const computerChoice = getComputerChoice().toLowerCase();
     const playerChoice = playerSelection.toLowerCase();
 
     if (playerChoice !== computerChoice) {
-        if (playerChoice === "paper" || playerChoice === "p") {
+        if (playerChoice === "paper") {
             if (computerChoice === "rock") {
-                return "Paper beats rock\nYou win!";
+                return "Paper beats rock | You win!";
             } else if (computerChoice === "scissors") {
-                return "Scissors beats paper\nYou lose!";
-            } else {
-                return "DRAW";
+                return "Scissors beats paper | You lose!";
             }
-        } else if (playerChoice === "rock" || playerChoice === "r") {
+        } else if (playerChoice === "rock") {
             if (computerChoice === "scissors") {
-                return "Rock beats scissors\nYou win!";
+                return "Rock beats scissors | You win!";
             } else if ( computerChoice === "paper") {
-                return "Paper beats rock\nYou lose!";
-            } else {
-                return "DRAW";
+                return "Paper beats rock | You lose!";
             }
-        } else if (playerChoice === "scissors" || playerChoice === "s") {
+        } else if (playerChoice === "scissors") {
             if (computerChoice === "paper") {
-                return "Scissors beats paper\nYou win!";
+                return "Scissors beats paper | You win!";
             } else if (computerChoice === "rock") {
-                return "Rock beats scissors\nYou lose!";
-            } else {
-                return "DRAW";
+                return "Rock beats scissors | You lose!";
             }
         }
+    } else {
+        return `You: ${playerChoice} | Opponent: ${computerChoice} | Draw!`;
     }
 }
 
-function playGame() {
-    let score = 0;
+function playGame(weapon = '') {
+    let playerChoice = weapon;
 
-    let playerChoice = prompt("Enter type of weapon\nRock / Paper / Scissors");
-    const computerChoice = getComputerChoice().toLowerCase();
-
-    if (playerChoice !== null) {
-        playerChoice = playerChoice.toLowerCase();
-    }
-
-    if (playerChoice === '') {
-        alert("ERROR!\nEnter type of weapon\nRock / Paper / Scissors");
-        index--;
-        } else if (playerChoice === null) {
-            console.log("canceled");
-            index = 5;
-        } else if (playerChoice === "rock" || playerChoice === "r" ||
-            playerChoice === "paper" || playerChoice === "p" ||
-            playerChoice === "scissors" || playerChoice === "s")
-            {
-                const gameResult = playRound(playerChoice, computerChoice);
-                alert(gameResult);
-
-                if (gameResult.slice(-4) === "win!") {
-                    score++;
-                } else if (gameResult.slice(-5) === "lose!") {
-                    score--;
-                } 
-            } else {
-                alert("ERROR!\nEnter type of weapon\nRock / Paper / Scissors");
-                index--;    
-            }
-
-    alert("Score: " + score);
+    const gameResult = playRound(playerChoice);
+    return gameResult;
 }
 
 const rockButton = document.querySelector('#rock');
 const paperButton = document.querySelector('#paper');
-const scissorsButton = document.querySelector('#scissors')
+const scissorsButton = document.querySelector('#scissors');
 
-const container = document.querySelector('container');
+const container = document.querySelector('.container');
+const result = document.querySelector('#result');
+const score = document.querySelector('#score');
+
+const startGame = document.querySelector('#start-game')
+
+let playerScore;
+
+rockButton.disabled = true;
+paperButton.disabled = true;
+scissorsButton.disabled = true;
+startGame.disabled = false;
 
 container.addEventListener('click', (e) => {
     let target = e.target;
+    let gameResult;
 
-    switch(target.id) {
-        case 'rock':
-            break;
-        case 'paper':
-            break;
-        case 'scissors':
-            break;
+    if (target.id === 'start-game' && !startGame.disabled) {
+        rockButton.disabled = false;
+        paperButton.disabled = false;
+        scissorsButton.disabled = false;
+        startGame.disabled = true;
+        playerScore = 0;
+        score.textContent = `Score: ${playerScore}`;
+        result.textContent = '';
+    } else {
+        switch (target.id) {
+            case 'rock':
+                gameResult = playGame('rock');
+                break;
+            case 'paper':
+                gameResult = playGame('paper');
+                break;
+            case 'scissors':
+                gameResult = playGame('scissors');
+                break;
+        }
+
+        result.textContent = gameResult;
+
+        if (gameResult.includes('win')) {
+            playerScore++;
+            if (playerScore === 5) {
+                rockButton.disabled = true;
+                paperButton.disabled = true;
+                scissorsButton.disabled = true;
+                startGame.disabled = false;
+                score.textContent = 'Congratulations!';
+                result.textContent = `Score: ${playerScore}`;
+                return;
+            }
+        } else if (gameResult.includes('lose')) {
+            playerScore--;
+            if (playerScore === -5) {
+                rockButton.disabled = true;
+                paperButton.disabled = true;
+                scissorsButton.disabled = true;
+                startGame.disabled = false;
+                score.textContent = 'Maybe next time!';
+                result.textContent = `Score: ${playerScore}`;
+                return;
+            }
+        }
+
+        score.textContent = `Score: ${playerScore}`;
     }
 });
-
-playGame();
